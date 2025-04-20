@@ -29,7 +29,7 @@ export class TokenManager {
   public static getAuthHeaders(): any {
     return {
       'x-rapidapi-key': this.getToken(),
-      'x-rapidapi-host': 'public-holidays7.p.rapidapi.com'
+      'x-rapidapi-host': 'public-holidays7.p.rapidapi.com',
     };
   }
 }

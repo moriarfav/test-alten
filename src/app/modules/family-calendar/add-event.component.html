@@ -13,22 +13,28 @@
       <ion-label position="floating">Title</ion-label>
       <ion-input [(ngModel)]="event.title" name="title" required></ion-input>
     </ion-item>
-    
+
     <ion-item>
       <ion-label position="floating">Description</ion-label>
-      <ion-textarea [(ngModel)]="event.description" name="description"></ion-textarea>
+      <ion-textarea
+        [(ngModel)]="event.description"
+        name="description"
+      ></ion-textarea>
     </ion-item>
-    
+
     <ion-item>
       <ion-label>Start Date</ion-label>
-      <ion-datetime [(ngModel)]="event.start_date" name="startDate"></ion-datetime>
+      <ion-datetime
+        [(ngModel)]="event.start_date"
+        name="startDate"
+      ></ion-datetime>
     </ion-item>
-    
+
     <ion-item>
       <ion-label>End Date</ion-label>
       <ion-datetime [(ngModel)]="event.end_date" name="endDate"></ion-datetime>
     </ion-item>
-    
+
     <ion-item>
       <ion-label>Priority</ion-label>
       <ion-select [(ngModel)]="event.priority" name="priority">
@@ -37,18 +43,21 @@
         <ion-select-option value="low">Low</ion-select-option>
       </ion-select>
     </ion-item>
-    
+
     <ion-item>
       <ion-label>Assign To</ion-label>
-      <ion-button size="small" (click)="loadFamilyMembers()">Load Members</ion-button>
+      <ion-button size="small" (click)="loadFamilyMembers()"
+        >Load Members</ion-button
+      >
     </ion-item>
-    
+
     <ion-list *ngIf="familyMembers.length > 0">
       <ion-item *ngFor="let member of familyMembers">
         <ion-label>{{ member.name }} ({{ member.role }})</ion-label>
-        <ion-checkbox 
-          [checked]="isMemberSelected(member.id)" 
-          (ionChange)="toggleMemberSelection(member.id)">
+        <ion-checkbox
+          [checked]="isMemberSelected(member.id)"
+          (ionChange)="toggleMemberSelection(member.id)"
+        >
         </ion-checkbox>
       </ion-item>
     </ion-list>

@@ -16,7 +16,10 @@
     <!-- Selector de país -->
     <ion-item>
       <ion-label>Country</ion-label>
-      <ion-select [(ngModel)]="selectedCountry" (ionChange)="changeCountry(selectedCountry)">
+      <ion-select
+        [(ngModel)]="selectedCountry"
+        (ionChange)="changeCountry(selectedCountry)"
+      >
         <ion-select-option value="ES">Spain</ion-select-option>
         <ion-select-option value="US">United States</ion-select-option>
         <ion-select-option value="GB">United Kingdom</ion-select-option>
@@ -64,7 +67,10 @@
     </ion-list-header>
 
     <ion-list>
-      <ion-item *ngFor="let event of familyEvents" [ngClass]="{'high-priority': event.priority === 'high'}">
+      <ion-item
+        *ngFor="let event of familyEvents"
+        [ngClass]="{ 'high-priority': event.priority === 'high' }"
+      >
         <ion-label>
           <h2>{{ event.title }}</h2>
           <p>{{ formatEventDate(event) }}</p>

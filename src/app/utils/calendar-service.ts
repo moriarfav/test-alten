@@ -9,17 +9,19 @@ export class CalendarService {
 
   private apiKey = 'bd95842134msh83f3bb9bb772044p15b225jsn39f93bdc9976';
 
-  constructor() {
-  }
+  constructor() {}
 
-  public async getHolidays(country = APP_CONFIG.defaultCountry, year = new Date().getFullYear()): Promise<Holiday[]> {
+  public async getHolidays(
+    country = APP_CONFIG.defaultCountry,
+    year = new Date().getFullYear()
+  ): Promise<Holiday[]> {
     try {
       const response = await axios.get(`${this.baseUrl}/`, {
         params: {
           api_key: this.apiKey,
           country: country,
-          year: year
-        }
+          year: year,
+        },
       });
 
       Logger.info(`Retrieved ${response.data.length} holidays`);
@@ -32,13 +34,15 @@ export class CalendarService {
     }
   }
 
-  public async fetchHolidaysForCountry(countryCode: string): Promise<Holiday[]> {
+  public async fetchHolidaysForCountry(
+    countryCode: string
+  ): Promise<Holiday[]> {
     try {
       const token = TokenManager.getToken();
 
       const headers = {
         'x-rapidapi-key': token,
-        'x-rapidapi-host': 'public-holidays7.p.rapidapi.com'
+        'x-rapidapi-host': 'public-holidays7.p.rapidapi.com',
       };
 
       const url = 'https://public-holidays7.p.rapidapi.com/';
@@ -48,9 +52,9 @@ export class CalendarService {
       const response = await axios.get(url, {
         params: {
           country: countryCode,
-          year: year
+          year: year,
         },
-        headers: headers
+        headers: headers,
       });
 
       return this.transformHolidayData(response.data);
@@ -62,7 +66,7 @@ export class CalendarService {
   }
 
   private transformHolidayData(data: any[]): Holiday[] {
-    return data.map(item => ({
+    return data.map((item) => ({
       name: item.name,
       description: '',
       country: item.country,
@@ -72,12 +76,20 @@ export class CalendarService {
       date_year: item.date.split('-')[0],
       date_month: item.date.split('-')[1],
       date_day: item.date.split('-')[2],
-      week_day: this.getDayOfWeek(new Date(item.date))
+      week_day: this.getDayOfWeek(new Date(item.date)),
     }));
   }
 
   private getDayOfWeek(date: Date): string {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const days = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
     return days[date.getDay()];
   }
 
@@ -89,22 +101,22 @@ export class CalendarService {
           name: 'Juan García',
           role: 'Padre',
           country: 'ES',
-          email: 'juan@example.com'
+          email: 'juan@example.com',
         },
         {
           id: '2',
           name: 'María López',
           role: 'Madre',
           country: 'ES',
-          email: 'maria@example.com'
+          email: 'maria@example.com',
         },
         {
           id: '3',
           name: 'Luis García',
           role: 'Hijo',
           country: 'ES',
-          email: 'luis@example.com'
-        }
+          email: 'luis@example.com',
+        },
       ];
 
       return familyData;
@@ -114,7 +126,10 @@ export class CalendarService {
     }
   }
 
-  public async getHolidaysByMonth(month: string, country = APP_CONFIG.defaultCountry): Promise<Holiday[]> {
+  public async getHolidaysByMonth(
+    month: string,
+    country = APP_CONFIG.defaultCountry
+  ): Promise<Holiday[]> {
     try {
       const url = 'https://holidays.abstractapi.com/v1/';
 
@@ -123,8 +138,8 @@ export class CalendarService {
           api_key: this.apiKey,
           country: country,
           year: new Date().getFullYear().toString(),
-          month: month
-        }
+          month: month,
+        },
       });
 
       return response.data;
@@ -143,7 +158,7 @@ export class CalendarService {
     try {
       const newEvent = {
         ...event,
-        id: 'event_' + new Date().getTime().toString()
+        id: 'event_' + new Date().getTime().toString(),
       };
 
       Logger.info('Created new event', { id: newEvent.id });
@@ -165,7 +180,7 @@ export class CalendarService {
       return {
         ...event,
         id: `evt_${Date.now()}`,
-        created: new Date().toISOString()
+        created: new Date().toISOString(),
       };
     } catch (error) {
       console.error('Error creating event:', error);
@@ -173,13 +188,16 @@ export class CalendarService {
     }
   }
 
-  public async updateFamilyEvent(id: string, eventData: Partial<FamilyEvent>): Promise<FamilyEvent> {
+  public async updateFamilyEvent(
+    id: string,
+    eventData: Partial<FamilyEvent>
+  ): Promise<FamilyEvent> {
     try {
       const updatedEvent = {
         id,
         ...eventData,
         title: eventData.title || 'Sin título',
-        start_date: eventData.start_date || new Date().toISOString()
+        start_date: eventData.start_date || new Date().toISOString(),
       } as FamilyEvent;
 
       return updatedEvent;
@@ -205,7 +223,8 @@ export class CalendarService {
 
   public async getAllHolidays(countryCode: string): Promise<Holiday[]> {
     try {
-      const staticServiceHolidays = await HolidaysApiService.getHolidaysByCountry(countryCode);
+      const staticServiceHolidays =
+        await HolidaysApiService.getHolidaysByCountry(countryCode);
 
       if (staticServiceHolidays && staticServiceHolidays.length > 0) {
         return staticServiceHolidays;
@@ -229,7 +248,7 @@ export class CalendarService {
     return [
       {
         name: 'Labor Day',
-        description: 'International Workers\' Day',
+        description: "International Workers' Day",
         country: 'ES',
         location: 'All',
         type: 'National',
@@ -237,7 +256,7 @@ export class CalendarService {
         date_year: '2025',
         date_month: '05',
         date_day: '01',
-        week_day: 'Thursday'
+        week_day: 'Thursday',
       },
       {
         name: 'Constitution Day',
@@ -249,8 +268,8 @@ export class CalendarService {
         date_year: '2025',
         date_month: '12',
         date_day: '06',
-        week_day: 'Saturday'
-      }
+        week_day: 'Saturday',
+      },
     ];
   }
 }

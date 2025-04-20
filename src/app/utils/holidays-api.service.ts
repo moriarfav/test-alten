@@ -17,13 +17,12 @@ export class HolidaysApiService {
       if (!this.checkTokenValidity()) {
         await TokenManager.refreshToken();
       }
-
       const token = TokenManager.getToken();
 
       const headers = TokenManager.getAuthHeaders();
 
-      const response = await axios.get(this.baseUrl + year + '/'+ country, {
-        headers: headers
+      const response = await axios.get(this.baseUrl + year + '/' + country, {
+        headers: headers,
       });
 
       const transformedHolidays = this.transformHolidays(response.data);
@@ -72,7 +71,7 @@ export class HolidaysApiService {
         date_year: dateParts[0],
         date_month: dateParts[1],
         date_day: dateParts[2],
-        week_day: this.getWeekDay(holiday.date)
+        week_day: this.getWeekDay(holiday.date),
       });
     }
 
@@ -98,7 +97,10 @@ export class HolidaysApiService {
 
     if (lowerName.includes('christmas') || lowerName.includes('easter')) {
       return 'Religious';
-    } else if (lowerName.includes('independence') || lowerName.includes('national')) {
+    } else if (
+      lowerName.includes('independence') ||
+      lowerName.includes('national')
+    ) {
       return 'National';
     } else {
       return 'Public';
@@ -106,7 +108,15 @@ export class HolidaysApiService {
   }
 
   private static getWeekDay(dateString: string): string {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const days = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
     const date = new Date(dateString);
     return days[date.getDay()];
   }
@@ -119,7 +129,9 @@ export class HolidaysApiService {
     }
   }
 
-  public static async getHolidaysByCountry(countryCode: string): Promise<Holiday[]> {
+  public static async getHolidaysByCountry(
+    countryCode: string
+  ): Promise<Holiday[]> {
     if (HolidaysCache.hasCache(countryCode)) {
       const cachedData = HolidaysCache.getHolidays(countryCode);
       if (cachedData) {

@@ -42,7 +42,7 @@ export interface FamilyEvent {
 export enum AppStatus {
   LOADING = 'loading',
   READY = 'ready',
-  ERROR = 'error'
+  ERROR = 'error',
 }
 
 export const APP_CONFIG = {
@@ -50,7 +50,7 @@ export const APP_CONFIG = {
   refreshInterval: 60000,
   maxEvents: 100,
   storageKey: 'family_calendar_storage',
-  defaultCountry: 'ES'
+  defaultCountry: 'ES',
 };
 
 export function formatDate(date: string): string {

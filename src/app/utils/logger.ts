@@ -3,7 +3,7 @@ export enum LogLevel {
   INFO = 1,
   WARN = 2,
   ERROR = 3,
-  CRITICAL = 4
+  CRITICAL = 4,
 }
 
 const GLOBAL_LOG_LEVEL = LogLevel.INFO;
@@ -17,47 +17,47 @@ export class Logger {
       this.saveToLocalStorage('debug', message);
     }
   }
-  
+
   static info(message: string, ...data: any[]) {
     if (GLOBAL_LOG_LEVEL <= LogLevel.INFO) {
       console.info(`[INFO] ${message}`, ...data);
     }
   }
-  
+
   static warn(message: string, ...data: any[]) {
     if (GLOBAL_LOG_LEVEL <= LogLevel.WARN) {
       console.warn(`[WARN] ${message}`, ...data);
     }
   }
-  
+
   static error(message: string, error?: any) {
     if (GLOBAL_LOG_LEVEL <= LogLevel.ERROR) {
       console.error(`[ERROR] ${message}`, error);
-      
+
       if (LOG_TO_SERVER) {
         this.sendToServer('error', message, error);
       }
     }
   }
-  
+
   static critical(message: string, error?: any) {
     if (GLOBAL_LOG_LEVEL <= LogLevel.CRITICAL) {
       console.error(`[CRITICAL] ${message}`, error);
       alert(`Critical error: ${message}`);
-      
+
       if (LOG_TO_SERVER) {
         this.sendToServer('critical', message, error);
       }
     }
   }
-  
+
   private static saveToLocalStorage(level: string, message: string) {
     try {
       const logs = JSON.parse(localStorage.getItem('app_logs') || '[]');
       logs.push({
         level,
         message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
       if (logs.length > 100) {
         logs.shift();
@@ -67,7 +67,7 @@ export class Logger {
       console.error('Error saving log to localStorage', e);
     }
   }
-  
+
   private static sendToServer(level: string, message: string, data?: any) {
     try {
       fetch(SERVER_ENDPOINT, {
@@ -80,9 +80,9 @@ export class Logger {
           message,
           data,
           app: 'family-calendar',
-          timestamp: new Date().toISOString()
-        })
-      }).catch(e => console.error('Error sending log to server', e));
+          timestamp: new Date().toISOString(),
+        }),
+      }).catch((e) => console.error('Error sending log to server', e));
     } catch (e) {
       console.error('Error preparing log for server', e);
     }
@@ -92,19 +92,22 @@ export class Logger {
 export class AppErrorHandler {
   static handleError(error: any, componentName?: string) {
     const errorMsg = error.message || 'Unknown error occurred';
-    Logger.error(`Error in ${componentName || 'unknown component'}: ${errorMsg}`, error);
-    
+    Logger.error(
+      `Error in ${componentName || 'unknown component'}: ${errorMsg}`,
+      error
+    );
+
     return {
       userMessage: 'Something went wrong. Please try again or contact support.',
       technical: errorMsg,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
-  
+
   static handleHttpError(error: any) {
     let message = 'Network error occurred';
     let status = 0;
-    
+
     if (error.response) {
       status = error.response.status;
       switch (status) {
@@ -125,7 +128,7 @@ export class AppErrorHandler {
           message = `Server returned error code ${status}`;
       }
     }
-    
+
     Logger.error(`HTTP Error: ${message}`, error);
     return { message, status };
   }

@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import {
   IonButton,
   IonContent,
@@ -15,10 +15,17 @@ import {
   IonSegmentButton,
   IonSelect,
   IonSelectOption,
-  IonSpinner
+  IonSpinner,
 } from '@ionic/angular/standalone';
-import {APP_CONFIG, AppStatus, FamilyEvent, FamilyMember, formatDate, Holiday} from '../../utils/models';
-import {HolidaysApiService} from '../../utils/holidays-api.service';
+import {
+  APP_CONFIG,
+  AppStatus,
+  FamilyEvent,
+  FamilyMember,
+  formatDate,
+  Holiday,
+} from '../../utils/models';
+import { HolidaysApiService } from '../../utils/holidays-api.service';
 
 @Component({
   selector: 'app-calendar',
@@ -28,11 +35,21 @@ import {HolidaysApiService} from '../../utils/holidays-api.service';
   imports: [
     CommonModule,
     FormsModule,
-    IonContent, IonSpinner,
-    IonIcon, IonButton, IonSegment, IonSegmentButton, IonLabel,
-    IonList, IonItem, IonFab, IonFabButton, IonSelect, IonSelectOption,
-    IonListHeader
-  ]
+    IonContent,
+    IonSpinner,
+    IonIcon,
+    IonButton,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonList,
+    IonItem,
+    IonFab,
+    IonFabButton,
+    IonSelect,
+    IonSelectOption,
+    IonListHeader,
+  ],
 })
 export class CalendarComponent implements OnInit {
   events: FamilyEvent[] = [];
@@ -47,10 +64,10 @@ export class CalendarComponent implements OnInit {
     try {
       this.events = this.getMockEvents();
       this.familyMembers = this.getMockFamilyMembers();
-      
+
       this.loadHolidays();
-      
-      this.familyEvents = this.events.filter(event => !event.is_holiday);
+
+      this.familyEvents = this.events.filter((event) => !event.is_holiday);
       this.status = AppStatus.READY;
       localStorage.setItem('lastUpdate', new Date().toISOString());
     } catch (error) {
@@ -59,53 +76,54 @@ export class CalendarComponent implements OnInit {
       console.error('Calendar initialization error:', error);
     }
   }
-  
+
   private loadHolidays() {
     HolidaysApiService.getHolidaysByCountry(this.selectedCountry)
-      .then(holidays => {
+      .then((holidays) => {
         if (holidays && holidays.length > 0) {
           this.holidays = holidays;
-          
+
           this.addHolidaysToEvents();
         } else {
           this.holidays = this.getMockHolidays();
           console.log('Using mock holidays data');
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Failed to load holidays:', error);
-        
+
         this.holidays = this.getMockHolidays();
       });
   }
-  
+
   private addHolidaysToEvents() {
-    const holidayEvents: FamilyEvent[] = this.holidays.map(holiday => ({
+    const holidayEvents: FamilyEvent[] = this.holidays.map((holiday) => ({
       id: `holiday_${holiday.date}`,
       title: holiday.name,
-      description: holiday.description || `${holiday.type} holiday in ${holiday.country}`,
+      description:
+        holiday.description || `${holiday.type} holiday in ${holiday.country}`,
       start_date: holiday.date,
       priority: 'medium',
       is_holiday: true,
-      holiday_id: holiday.date
+      holiday_id: holiday.date,
     }));
-    
+
     this.events = [...this.events, ...holidayEvents];
   }
 
   // Métodos para la plantilla
   changeCountry(country: string) {
     console.log('Country changed to:', country);
-    
+
     this.selectedCountry = country;
-    
+
     this.loadHolidays();
   }
 
   getCurrentMonthHolidays(): Holiday[] {
     const currentMonth = new Date().getMonth() + 1;
     return this.holidays.filter(
-      holiday => parseInt(holiday.date_month) === currentMonth
+      (holiday) => parseInt(holiday.date_month) === currentMonth
     );
   }
 
@@ -114,8 +132,8 @@ export class CalendarComponent implements OnInit {
   }
 
   getEventsByMember(memberId: string): FamilyEvent[] {
-    return this.events.filter(event =>
-      event.assigned_to && event.assigned_to.includes(memberId)
+    return this.events.filter(
+      (event) => event.assigned_to && event.assigned_to.includes(memberId)
     );
   }
 
@@ -129,7 +147,7 @@ export class CalendarComponent implements OnInit {
     setTimeout(() => {
       const newEvent = {
         ...event,
-        id: 'evt_' + Date.now()
+        id: 'evt_' + Date.now(),
       };
       this.events.push(newEvent);
       this.familyEvents.push(newEvent);
@@ -142,7 +160,7 @@ export class CalendarComponent implements OnInit {
   }
 
   filterHighPriorityEvents(): FamilyEvent[] {
-    return this.events.filter(event => event.priority === 'high');
+    return this.events.filter((event) => event.priority === 'high');
   }
 
   // Datos de muestra para desarrollo
@@ -151,11 +169,11 @@ export class CalendarComponent implements OnInit {
       {
         id: 'evt_1',
         title: 'Family Dinner',
-        description: 'Dinner at grandma\'s house',
+        description: "Dinner at grandma's house",
         start_date: '2025-04-20T18:00:00',
         end_date: '2025-04-20T21:00:00',
         assigned_to: ['mem_1', 'mem_2', 'mem_3'],
-        priority: 'medium'
+        priority: 'medium',
       },
       {
         id: 'evt_2',
@@ -164,7 +182,7 @@ export class CalendarComponent implements OnInit {
         start_date: '2025-04-22T16:30:00',
         end_date: '2025-04-22T17:30:00',
         assigned_to: ['mem_2'],
-        priority: 'high'
+        priority: 'high',
       },
       {
         id: 'evt_3',
@@ -173,8 +191,8 @@ export class CalendarComponent implements OnInit {
         start_date: '2025-04-26T20:00:00',
         end_date: '2025-04-26T22:30:00',
         assigned_to: ['mem_1', 'mem_3', 'mem_4'],
-        priority: 'low'
-      }
+        priority: 'low',
+      },
     ];
   }
 
@@ -185,27 +203,27 @@ export class CalendarComponent implements OnInit {
         name: 'John Doe',
         role: 'Father',
         email: 'john.doe@example.com',
-        country: 'US'
+        country: 'US',
       },
       {
         id: 'mem_2',
         name: 'Jane Doe',
         role: 'Mother',
         email: 'jane.doe@example.com',
-        country: 'US'
+        country: 'US',
       },
       {
         id: 'mem_3',
         name: 'Jimmy Doe',
         role: 'Son',
-        country: 'US'
+        country: 'US',
       },
       {
         id: 'mem_4',
         name: 'Jenny Doe',
         role: 'Daughter',
-        country: 'US'
-      }
+        country: 'US',
+      },
     ];
   }
 
@@ -213,7 +231,7 @@ export class CalendarComponent implements OnInit {
     return [
       {
         name: 'Labor Day',
-        description: 'International Workers\' Day',
+        description: "International Workers' Day",
         country: 'ES',
         location: 'All',
         type: 'National',
@@ -221,7 +239,7 @@ export class CalendarComponent implements OnInit {
         date_year: '2025',
         date_month: '05',
         date_day: '01',
-        week_day: 'Thursday'
+        week_day: 'Thursday',
       },
       {
         name: 'Constitution Day',
@@ -233,7 +251,7 @@ export class CalendarComponent implements OnInit {
         date_year: '2025',
         date_month: '12',
         date_day: '06',
-        week_day: 'Saturday'
+        week_day: 'Saturday',
       },
       {
         name: 'Easter',
@@ -245,8 +263,8 @@ export class CalendarComponent implements OnInit {
         date_year: '2025',
         date_month: '04',
         date_day: '20',
-        week_day: 'Sunday'
-      }
+        week_day: 'Sunday',
+      },
     ];
   }
 }

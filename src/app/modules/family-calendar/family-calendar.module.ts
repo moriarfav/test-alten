@@ -8,10 +8,6 @@ import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [],
-  imports: [
-    CommonModule,
-    IonicModule,
-    FormsModule
-  ]
+  imports: [CommonModule, IonicModule, FormsModule],
 })
-export class FamilyCalendarModule { }
+export class FamilyCalendarModule {}
