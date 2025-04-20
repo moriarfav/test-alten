@@ -1,0 +1,89 @@
+<ion-content>
+  <!-- Mostrar mensaje de carga o error -->
+  <div *ngIf="status === 'loading'" class="loading-container">
+    <ion-spinner></ion-spinner>
+    <p>Loading calendar data...</p>
+  </div>
+
+  <div *ngIf="status === 'error'" class="error-container">
+    <ion-icon name="alert-circle"></ion-icon>
+    <p>{{ errorMessage }}</p>
+    <ion-button (click)="ngOnInit()">Retry</ion-button>
+  </div>
+
+  <!-- Contenido principal -->
+  <div *ngIf="status === 'ready'" class="calendar-container">
+    <!-- Selector de país -->
+    <ion-item>
+      <ion-label>Country</ion-label>
+      <ion-select [(ngModel)]="selectedCountry" (ionChange)="changeCountry(selectedCountry)">
+        <ion-select-option value="ES">Spain</ion-select-option>
+        <ion-select-option value="US">United States</ion-select-option>
+        <ion-select-option value="GB">United Kingdom</ion-select-option>
+        <ion-select-option value="FR">France</ion-select-option>
+        <ion-select-option value="DE">Germany</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-segment value="all">
+      <ion-segment-button value="all">
+        <ion-label>All Events</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="holidays">
+        <ion-label>Holidays</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="family">
+        <ion-label>Family Events</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Sección de días festivos -->
+    <ion-list-header>
+      <ion-label>Holidays</ion-label>
+    </ion-list-header>
+
+    <ion-list>
+      <ion-item *ngFor="let holiday of getCurrentMonthHolidays()">
+        <ion-label>
+          <h2>{{ holiday.name }}</h2>
+          <p>{{ formatHolidayDate(holiday) }} - {{ holiday.type }}</p>
+          <p *ngIf="holiday.description">{{ holiday.description }}</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item *ngIf="getCurrentMonthHolidays().length === 0">
+        <ion-label>
+          <p>No holidays this month</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <!-- Sección de eventos familiares -->
+    <ion-list-header>
+      <ion-label>Family Events</ion-label>
+    </ion-list-header>
+
+    <ion-list>
+      <ion-item *ngFor="let event of familyEvents" [ngClass]="{'high-priority': event.priority === 'high'}">
+        <ion-label>
+          <h2>{{ event.title }}</h2>
+          <p>{{ formatEventDate(event) }}</p>
+          <p *ngIf="event.description">{{ event.description }}</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item *ngIf="familyEvents.length === 0">
+        <ion-label>
+          <p>No family events scheduled</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <!-- Botón flotante para añadir nuevo evento -->
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button>
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </div>
+</ion-content>
