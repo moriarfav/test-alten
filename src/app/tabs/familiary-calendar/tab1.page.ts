@@ -5,8 +5,8 @@ import {
   IonTitle,
   IonContent,
 } from '@ionic/angular/standalone';
-import { ExploreContainerComponent } from '../explore-container/explore-container.component';
-import { CalendarComponent } from '../modules/family-calendar/calendar.component';
+import { ExploreContainerComponent } from '../../explore-container/explore-container.component';
+import { CalendarComponent } from './components/calendar.component';
 
 @Component({
   selector: 'app-tab1',

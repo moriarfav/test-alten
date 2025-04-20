@@ -22,10 +22,10 @@ import {
   AppStatus,
   FamilyEvent,
   FamilyMember,
-  formatDate,
   Holiday,
-} from '../../utils/models';
-import { HolidaysApiService } from '../../utils/holidays-api.service';
+} from '../../../models/family-calendar-model';
+import { HolidaysApiService } from '../../../utils/holidays-api.service';
+import { formatDate } from 'src/app/utils/date-utils';
 
 @Component({
   selector: 'app-calendar',

@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { environment } from '../../environments/environment';
-import { TokenManager } from './token-manager';
-import { HolidaysCache } from './holidays-cache';
 import { Holiday } from '../models/family-calendar-model';
+import { TokenManager } from '../utils/token-manager';
+import { HolidaysCache } from '../utils/holidays-cache';
 
 export class HolidaysApiService {
   private static baseUrl = 'https://public-holidays7.p.rapidapi.com/';

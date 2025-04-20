@@ -8,7 +8,7 @@ export const routes: Routes = [
   {
     path: 'calendar',
     loadComponent: () =>
-      import('./modules/family-calendar/calendar.component').then(
+      import('./tabs/familiary-calendar/components/calendar.component').then(
         (m) => m.CalendarComponent
       ),
   },

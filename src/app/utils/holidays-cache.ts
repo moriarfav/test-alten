@@ -1,4 +1,4 @@
-import { Holiday } from './models';
+import { Holiday } from '../models/family-calendar-model';
 
 export class HolidaysCache {
   private static holidaysData: { [key: string]: Holiday[] } = {};

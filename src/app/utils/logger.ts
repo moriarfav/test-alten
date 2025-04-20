@@ -6,85 +6,110 @@ export enum LogLevel {
   CRITICAL = 4,
 }
 
-const GLOBAL_LOG_LEVEL = LogLevel.INFO;
-const LOG_TO_SERVER = false;
-const SERVER_ENDPOINT = 'https://log-service.example.com/logs';
+let GLOBAL_LOG_LEVEL = LogLevel.INFO; // Nivel de log predeterminado
+let LOG_TO_SERVER = false; // Controla si los logs se envían al servidor
+let SERVER_ENDPOINT = 'https://log-service.example.com/logs'; // Endpoint del servidor
 
 export class Logger {
+  // Permite configurar dinámicamente el nivel de log
+  static setLogLevel(level: LogLevel) {
+    GLOBAL_LOG_LEVEL = level;
+  }
+
+  // Permite habilitar o deshabilitar el envío de logs al servidor
+  static enableServerLogging(enable: boolean, endpoint?: string) {
+    LOG_TO_SERVER = enable;
+    if (endpoint) {
+      SERVER_ENDPOINT = endpoint;
+    }
+  }
+
+  // Formatea los mensajes de log con timestamp
+  private static formatMessage(level: string, message: string): string {
+    const timestamp = new Date().toISOString();
+    return `[${timestamp}] [${level}] ${message}`;
+  }
+
   static debug(message: string, ...data: any[]) {
     if (GLOBAL_LOG_LEVEL <= LogLevel.DEBUG) {
-      console.debug(`[DEBUG] ${message}`, ...data);
-      this.saveToLocalStorage('debug', message);
+      const formattedMessage = this.formatMessage('DEBUG', message);
+      console.debug(formattedMessage, ...data);
+      this.saveToLocalStorage('debug', formattedMessage);
     }
   }
 
   static info(message: string, ...data: any[]) {
     if (GLOBAL_LOG_LEVEL <= LogLevel.INFO) {
-      console.info(`[INFO] ${message}`, ...data);
+      const formattedMessage = this.formatMessage('INFO', message);
+      console.info(formattedMessage, ...data);
     }
   }
 
   static warn(message: string, ...data: any[]) {
     if (GLOBAL_LOG_LEVEL <= LogLevel.WARN) {
-      console.warn(`[WARN] ${message}`, ...data);
+      const formattedMessage = this.formatMessage('WARN', message);
+      console.warn(formattedMessage, ...data);
     }
   }
 
   static error(message: string, error?: any) {
     if (GLOBAL_LOG_LEVEL <= LogLevel.ERROR) {
-      console.error(`[ERROR] ${message}`, error);
+      const formattedMessage = this.formatMessage('ERROR', message);
+      console.error(formattedMessage, error);
 
       if (LOG_TO_SERVER) {
-        this.sendToServer('error', message, error);
+        this.sendToServer('error', formattedMessage, error);
       }
     }
   }
 
   static critical(message: string, error?: any) {
     if (GLOBAL_LOG_LEVEL <= LogLevel.CRITICAL) {
-      console.error(`[CRITICAL] ${message}`, error);
-      alert(`Critical error: ${message}`);
+      const formattedMessage = this.formatMessage('CRITICAL', message);
+      console.error(formattedMessage, error);
 
       if (LOG_TO_SERVER) {
-        this.sendToServer('critical', message, error);
+        this.sendToServer('critical', formattedMessage, error);
       }
     }
   }
 
+  // Guarda logs en el almacenamiento local
   private static saveToLocalStorage(level: string, message: string) {
     try {
-      const logs = JSON.parse(localStorage.getItem('app_logs') || '[]');
-      logs.push({
-        level,
-        message,
-        timestamp: new Date().toISOString(),
-      });
-      if (logs.length > 100) {
-        logs.shift();
-      }
-      localStorage.setItem('app_logs', JSON.stringify(logs));
+      const logs = JSON.parse(localStorage.getItem('logs') || '[]');
+      logs.push({ level, message, timestamp: new Date().toISOString() });
+      localStorage.setItem('logs', JSON.stringify(logs));
     } catch (e) {
-      console.error('Error saving log to localStorage', e);
+      console.warn('Failed to save log to localStorage', e);
     }
   }
 
-  private static sendToServer(level: string, message: string, data?: any) {
+  // Envía logs al servidor
+  private static async sendToServer(
+    level: string,
+    message: string,
+    error?: any
+  ) {
     try {
-      fetch(SERVER_ENDPOINT, {
+      const payload = {
+        level,
+        message,
+        error: error ? JSON.stringify(error) : undefined,
+        timestamp: new Date().toISOString(),
+      };
+
+      const response = await fetch(SERVER_ENDPOINT, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          level,
-          message,
-          data,
-          app: 'family-calendar',
-          timestamp: new Date().toISOString(),
-        }),
-      }).catch((e) => console.error('Error sending log to server', e));
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        console.warn('Failed to send log to server', response.statusText);
+      }
     } catch (e) {
-      console.error('Error preparing log for server', e);
+      console.error('Error sending log to server', e);
     }
   }
 }

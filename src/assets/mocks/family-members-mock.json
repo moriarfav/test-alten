@@ -1,0 +1,28 @@
+[
+  {
+    "id": "mem_1",
+    "name": "John Doe",
+    "role": "Father",
+    "email": "john.doe@example.com",
+    "country": "US"
+  },
+  {
+    "id": "mem_2",
+    "name": "Jane Doe",
+    "role": "Mother",
+    "email": "jane.doe@example.com",
+    "country": "US"
+  },
+  {
+    "id": "mem_3",
+    "name": "Jimmy Doe",
+    "role": "Son",
+    "country": "US"
+  },
+  {
+    "id": "mem_4",
+    "name": "Jenny Doe",
+    "role": "Daughter",
+    "country": "US"
+  }
+]

@@ -37,6 +37,7 @@ export interface FamilyEvent {
   priority?: 'high' | 'medium' | 'low';
   is_holiday?: boolean;
   holiday_id?: string;
+  created?: string;
 }
 
 export enum AppStatus {
@@ -53,15 +54,7 @@ export const APP_CONFIG = {
   defaultCountry: 'ES',
 };
 
-export function formatDate(date: string): string {
-  return new Date(date).toLocaleDateString();
-}
-
 export type NotificationType = 'email' | 'push' | 'sms';
-
-export function isValidEvent(event: FamilyEvent): boolean {
-  return !!event.title && !!event.start_date;
-}
 
 // Alias para compatibilidad con código existente
 export type Event = FamilyEvent;

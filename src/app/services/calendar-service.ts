@@ -5,9 +5,10 @@ import {
   FamilyEvent,
   APP_CONFIG,
 } from '../models/family-calendar-model';
-import { Logger, AppErrorHandler } from './logger';
-import { TokenManager } from './token-manager';
+import { Logger, AppErrorHandler } from '../utils/logger';
+import { TokenManager } from '../utils/token-manager';
 import { HolidaysApiService } from './holidays-api.service';
+import { environment } from '../../environments/environment';
 
 export class CalendarService {
   private baseUrl = 'https://public-holidays7.p.rapidapi.com';

@@ -18,9 +18,9 @@ import {
   IonList,
   IonCheckbox,
 } from '@ionic/angular/standalone';
-import { CalendarService } from '../../utils/calendar-service';
+import { CalendarService } from '../../../utils/calendar-service';
 import { Event, FamilyMember } from '../../utils/models';
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../../utils/logger';
 
 @Component({
   selector: 'app-add-event',
