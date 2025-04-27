@@ -10,15 +10,16 @@ Repositorio: Dependiendo del tamaño del equipo y del proyecto tambien se debe d
 
 - Se adoptó una arquitectura **MVVM (Model-View-ViewModel)** para separar las responsabilidades y mejorar la mantenibilidad del código.
 - Se dividieron las capas de la aplicación en:
+
   - **Modelos**: Representan los datos de la aplicación (models).
   - **Servicios**: Manejan la lógica de negocio y la comunicación con las APIs (services).
   - **Vistas**: Componentes que se encargan de la interfaz de usuario, (features).
 
-Carpetas adicionales:
+  Carpetas adicionales:
 
-- **Interceptors**: Se agrega una carpeta de interceptores
-- **Shared**: Se agrega una carpeta para utilidades y pequeños componentes, que sean reutilizables en toda la aplicacion.
-- **Mocks**: se añade una carpeta para mock en asset que dependiendo del tamaño de proyecto podria agruparse en features
+  - **Interceptors**: Se agrega una carpeta de interceptores
+  - **Shared**: Se agrega una carpeta para utilidades y pequeños componentes, que sean reutilizables en toda la aplicacion.
+  - **Mocks**: se añade una carpeta para mock en asset que dependiendo del tamaño de proyecto podria agruparse en features
 
 - Se mejoraron algunos metodos como: sortHolidaysByDate por uno mas claro y eficiente
 - Se renombraron los archivos para una mayor claridad por ejemplo tab1 por familiary-calendar
