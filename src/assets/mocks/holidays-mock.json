@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Labor Day",
+    "description": "International Workers' Day",
+    "country": "ES",
+    "location": "All",
+    "type": "National",
+    "date": "2025-05-01",
+    "date_year": "2025",
+    "date_month": "05",
+    "date_day": "01",
+    "week_day": "Thursday"
+  },
+  {
+    "name": "Constitution Day",
+    "description": "Spanish Constitution Day",
+    "country": "ES",
+    "location": "All",
+    "type": "National",
+    "date": "2025-12-06",
+    "date_year": "2025",
+    "date_month": "12",
+    "date_day": "06",
+    "week_day": "Saturday"
+  },
+  {
+    "name": "Easter",
+    "description": "Easter Sunday",
+    "country": "ES",
+    "location": "All",
+    "type": "Religious",
+    "date": "2025-04-20",
+    "date_year": "2025",
+    "date_month": "04",
+    "date_day": "20",
+    "week_day": "Sunday"
+  }
+]

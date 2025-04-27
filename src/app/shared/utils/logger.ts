@@ -6,25 +6,22 @@ export enum LogLevel {
   CRITICAL = 4,
 }
 
-let GLOBAL_LOG_LEVEL = LogLevel.INFO; // Nivel de log predeterminado
-let LOG_TO_SERVER = false; // Controla si los logs se envían al servidor
-let SERVER_ENDPOINT = 'https://log-service.example.com/logs'; // Endpoint del servidor
+let GLOBAL_LOG_LEVEL = LogLevel.INFO;
+let LOG_TO_SERVER = false;
+let SERVER_ENDPOINT = 'https://log-service.example.com/logs';
 
 export class Logger {
-  // Permite configurar dinámicamente el nivel de log
   static setLogLevel(level: LogLevel) {
     GLOBAL_LOG_LEVEL = level;
   }
 
-  // Permite habilitar o deshabilitar el envío de logs al servidor
   static enableServerLogging(enable: boolean, endpoint?: string) {
     LOG_TO_SERVER = enable;
     if (endpoint) {
       SERVER_ENDPOINT = endpoint;
     }
   }
-
-  // Formatea los mensajes de log con timestamp
+  // se añade timestamp para mejor control de errores
   private static formatMessage(level: string, message: string): string {
     const timestamp = new Date().toISOString();
     return `[${timestamp}] [${level}] ${message}`;
@@ -74,7 +71,6 @@ export class Logger {
     }
   }
 
-  // Guarda logs en el almacenamiento local
   private static saveToLocalStorage(level: string, message: string) {
     try {
       const logs = JSON.parse(localStorage.getItem('logs') || '[]');
@@ -85,7 +81,6 @@ export class Logger {
     }
   }
 
-  // Envía logs al servidor
   private static async sendToServer(
     level: string,
     message: string,
@@ -111,50 +106,5 @@ export class Logger {
     } catch (e) {
       console.error('Error sending log to server', e);
     }
-  }
-}
-
-export class AppErrorHandler {
-  static handleError(error: any, componentName?: string) {
-    const errorMsg = error.message || 'Unknown error occurred';
-    Logger.error(
-      `Error in ${componentName || 'unknown component'}: ${errorMsg}`,
-      error
-    );
-
-    return {
-      userMessage: 'Something went wrong. Please try again or contact support.',
-      technical: errorMsg,
-      timestamp: new Date().toISOString(),
-    };
-  }
-
-  static handleHttpError(error: any) {
-    let message = 'Network error occurred';
-    let status = 0;
-
-    if (error.response) {
-      status = error.response.status;
-      switch (status) {
-        case 401:
-          message = 'Authentication failed. Please login again.';
-          window.location.href = '/login';
-          break;
-        case 403:
-          message = 'You do not have permission to perform this action.';
-          break;
-        case 404:
-          message = 'The requested resource was not found.';
-          break;
-        case 500:
-          message = 'Server error occurred. Please try again later.';
-          break;
-        default:
-          message = `Server returned error code ${status}`;
-      }
-    }
-
-    Logger.error(`HTTP Error: ${message}`, error);
-    return { message, status };
   }
 }

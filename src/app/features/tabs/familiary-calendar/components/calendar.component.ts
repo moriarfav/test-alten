@@ -17,21 +17,23 @@ import {
   IonSelectOption,
   IonSpinner,
 } from '@ionic/angular/standalone';
-import {
-  APP_CONFIG,
-  AppStatus,
-  FamilyEvent,
-  FamilyMember,
-  Holiday,
-} from '../../../models/family-calendar-model';
-import { HolidaysApiService } from '../../../utils/holidays-api.service';
-import { formatDate } from 'src/app/utils/date-utils';
+
+import { ModalController } from '@ionic/angular';
+import { formatDate } from 'src/app/shared/utils/date-utils';
+import { HolidaysApiService } from 'src/app/services/familiary-calendar/holidays/holidays-api.service';
+import { Logger } from 'src/app/shared/utils/logger';
+import { AddEventComponent } from './add-event.component';
+import { CalendarService } from 'src/app/services/familiary-calendar/calendar-service';
+import { FamilyEvent, FamilyMember } from 'src/app/models/family-events.model';
+import { HolidayViewModel } from 'src/app/models/holiday.model';
+import { APP_CONFIG, AppStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss'],
   standalone: true,
+  providers: [ModalController, CalendarService],
   imports: [
     CommonModule,
     FormsModule,
@@ -55,15 +57,21 @@ export class CalendarComponent implements OnInit {
   events: FamilyEvent[] = [];
   familyEvents: FamilyEvent[] = [];
   familyMembers: FamilyMember[] = [];
-  holidays: Holiday[] = [];
+  filter: 'all' | 'holidays' | 'family' | undefined = 'all';
+  holidays: HolidayViewModel[] = [];
   status: AppStatus = AppStatus.LOADING;
   errorMessage: string = '';
   selectedCountry: string = APP_CONFIG.defaultCountry;
 
+  constructor(
+    private modalController: ModalController,
+    private calendarService: CalendarService
+  ) {}
+
   async ngOnInit() {
     try {
-      this.events = this.getMockEvents();
-      this.familyMembers = this.getMockFamilyMembers();
+      this.events = await this.calendarService.getMockEvents();
+      this.familyMembers = await this.calendarService.getMockFamilyMembers();
 
       this.loadHolidays();
 
@@ -73,26 +81,59 @@ export class CalendarComponent implements OnInit {
     } catch (error) {
       this.status = AppStatus.ERROR;
       this.errorMessage = 'Failed to load calendar data';
-      console.error('Calendar initialization error:', error);
+      Logger.error('Calendar initialization error:', error);
+    }
+  }
+
+  // Abrir el modal para añadir un evento familiar
+  async openFamilyEventModal() {
+    const modal = await this.modalController.create({
+      component: AddEventComponent, // Componente para añadir eventos familiares
+    });
+    await modal.present();
+    // Manejar los datos devueltos al cerrar el modal
+    const { data } = await modal.onDidDismiss();
+
+    if (data) {
+      this.familyEvents.push(data); // Añadir el evento a la lista de eventos familiares
+      Logger.info('Family event added:', data);
+    }
+  }
+
+  onFilterChange(filter: string | number | undefined): void {
+    if (typeof filter === 'string' || filter === undefined) {
+      this.filter =
+        filter === 'all' ||
+        filter === 'holidays' ||
+        filter === 'family' ||
+        filter === undefined
+          ? filter || 'all'
+          : 'all';
+    } else {
+      console.warn('Invalid filter value:', filter);
+      this.filter = 'all'; // Valor predeterminado en caso de tipo no válido
     }
   }
 
   private loadHolidays() {
     HolidaysApiService.getHolidaysByCountry(this.selectedCountry)
-      .then((holidays) => {
+      .then(async (holidays) => {
         if (holidays && holidays.length > 0) {
           this.holidays = holidays;
 
           this.addHolidaysToEvents();
         } else {
-          this.holidays = this.getMockHolidays();
-          console.log('Using mock holidays data');
+          this.holidays = HolidayViewModel.fromApiResponse(
+            await this.calendarService.getMockHolidays()
+          );
+          Logger.info('Using mock holidays data');
         }
       })
-      .catch((error) => {
-        console.error('Failed to load holidays:', error);
-
-        this.holidays = this.getMockHolidays();
+      .catch(async (error) => {
+        Logger.error('Failed to load holidays:', error);
+        this.holidays = HolidayViewModel.fromApiResponse(
+          await this.calendarService.getMockHolidays()
+        );
       });
   }
 
@@ -113,21 +154,21 @@ export class CalendarComponent implements OnInit {
 
   // Métodos para la plantilla
   changeCountry(country: string) {
-    console.log('Country changed to:', country);
+    Logger.info('Country changed to:', country);
 
     this.selectedCountry = country;
 
     this.loadHolidays();
   }
 
-  getCurrentMonthHolidays(): Holiday[] {
+  getCurrentMonthHolidays(): HolidayViewModel[] {
     const currentMonth = new Date().getMonth() + 1;
     return this.holidays.filter(
       (holiday) => parseInt(holiday.date_month) === currentMonth
     );
   }
 
-  formatHolidayDate(holiday: Holiday): string {
+  formatHolidayDate(holiday: HolidayViewModel): string {
     return `${holiday.date_day}/${holiday.date_month}/${holiday.date_year}`;
   }
 
@@ -161,110 +202,5 @@ export class CalendarComponent implements OnInit {
 
   filterHighPriorityEvents(): FamilyEvent[] {
     return this.events.filter((event) => event.priority === 'high');
-  }
-
-  // Datos de muestra para desarrollo
-  private getMockEvents(): FamilyEvent[] {
-    return [
-      {
-        id: 'evt_1',
-        title: 'Family Dinner',
-        description: "Dinner at grandma's house",
-        start_date: '2025-04-20T18:00:00',
-        end_date: '2025-04-20T21:00:00',
-        assigned_to: ['mem_1', 'mem_2', 'mem_3'],
-        priority: 'medium',
-      },
-      {
-        id: 'evt_2',
-        title: 'School Meeting',
-        description: 'Parent-teacher conference',
-        start_date: '2025-04-22T16:30:00',
-        end_date: '2025-04-22T17:30:00',
-        assigned_to: ['mem_2'],
-        priority: 'high',
-      },
-      {
-        id: 'evt_3',
-        title: 'Movie Night',
-        description: 'Watch the new superhero movie',
-        start_date: '2025-04-26T20:00:00',
-        end_date: '2025-04-26T22:30:00',
-        assigned_to: ['mem_1', 'mem_3', 'mem_4'],
-        priority: 'low',
-      },
-    ];
-  }
-
-  private getMockFamilyMembers(): FamilyMember[] {
-    return [
-      {
-        id: 'mem_1',
-        name: 'John Doe',
-        role: 'Father',
-        email: 'john.doe@example.com',
-        country: 'US',
-      },
-      {
-        id: 'mem_2',
-        name: 'Jane Doe',
-        role: 'Mother',
-        email: 'jane.doe@example.com',
-        country: 'US',
-      },
-      {
-        id: 'mem_3',
-        name: 'Jimmy Doe',
-        role: 'Son',
-        country: 'US',
-      },
-      {
-        id: 'mem_4',
-        name: 'Jenny Doe',
-        role: 'Daughter',
-        country: 'US',
-      },
-    ];
-  }
-
-  private getMockHolidays(): Holiday[] {
-    return [
-      {
-        name: 'Labor Day',
-        description: "International Workers' Day",
-        country: 'ES',
-        location: 'All',
-        type: 'National',
-        date: '2025-05-01',
-        date_year: '2025',
-        date_month: '05',
-        date_day: '01',
-        week_day: 'Thursday',
-      },
-      {
-        name: 'Constitution Day',
-        description: 'Spanish Constitution Day',
-        country: 'ES',
-        location: 'All',
-        type: 'National',
-        date: '2025-12-06',
-        date_year: '2025',
-        date_month: '12',
-        date_day: '06',
-        week_day: 'Saturday',
-      },
-      {
-        name: 'Easter',
-        description: 'Easter Sunday',
-        country: 'ES',
-        location: 'All',
-        type: 'Religious',
-        date: '2025-04-20',
-        date_year: '2025',
-        date_month: '04',
-        date_day: '20',
-        week_day: 'Sunday',
-      },
-    ];
   }
 }

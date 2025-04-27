@@ -1,0 +1,29 @@
+[
+  {
+    "id": "evt_1",
+    "title": "Family Dinner",
+    "description": "Dinner at grandma's house",
+    "start_date": "2025-04-20T18:00:00",
+    "end_date": "2025-04-20T21:00:00",
+    "assigned_to": ["mem_1", "mem_2", "mem_3"],
+    "priority": "medium"
+  },
+  {
+    "id": "evt_2",
+    "title": "School Meeting",
+    "description": "Parent-teacher conference",
+    "start_date": "2025-04-22T16:30:00",
+    "end_date": "2025-04-22T17:30:00",
+    "assigned_to": ["mem_2"],
+    "priority": "high"
+  },
+  {
+    "id": "evt_3",
+    "title": "Movie Night",
+    "description": "Watch the new superhero movie",
+    "start_date": "2025-04-26T20:00:00",
+    "end_date": "2025-04-26T22:30:00",
+    "assigned_to": ["mem_1", "mem_3", "mem_4"],
+    "priority": "low"
+  }
+]

@@ -1,4 +1,5 @@
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
+import { Logger } from './logger';
 
 export class TokenManager {
   private static token: string = environment.apiKey;
@@ -10,7 +11,7 @@ export class TokenManager {
   public static refreshToken(): Promise<string> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        console.log('Token refreshed');
+        Logger.info('Token refreshed');
         resolve(this.token);
       }, 300);
     });
@@ -18,7 +19,7 @@ export class TokenManager {
 
   public static saveToken(token: string): void {
     localStorage.setItem('api_token', token);
-
+    Logger.info('Token saved');
     this.token = token;
   }
 

@@ -1,19 +1,23 @@
-import { Holiday } from '../models/family-calendar-model';
+import { HolidayViewModel } from '../../../models/holiday.model';
+import { Logger } from '../../../shared/utils/logger';
 
 export class HolidaysCache {
-  private static holidaysData: { [key: string]: Holiday[] } = {};
+  private static holidaysData: { [key: string]: HolidayViewModel[] } = {};
 
-  public static cacheHolidays(countryCode: string, holidays: Holiday[]): void {
+  public static cacheHolidays(
+    countryCode: string,
+    holidays: HolidayViewModel[]
+  ): void {
     this.holidaysData[countryCode] = holidays;
 
     try {
       localStorage.setItem(`holidays_${countryCode}`, JSON.stringify(holidays));
     } catch (error) {
-      console.error('Failed to cache holidays in localStorage');
+      Logger.error('Failed to cache holidays in localStorage');
     }
   }
 
-  public static getHolidays(countryCode: string): Holiday[] | null {
+  public static getHolidays(countryCode: string): HolidayViewModel[] | null {
     if (this.holidaysData[countryCode]) {
       return this.holidaysData[countryCode];
     }
@@ -28,7 +32,7 @@ export class HolidaysCache {
         return holidays;
       }
     } catch (error) {
-      console.error('Error retrieving holidays from cache:', error);
+      Logger.error('Error retrieving holidays from cache:', error);
     }
 
     return null;
@@ -45,7 +49,7 @@ export class HolidaysCache {
         }
       }
     } catch (error) {
-      console.error('Error clearing holidays cache:', error);
+      Logger.error('Error clearing holidays cache:', error);
     }
   }
 
@@ -63,7 +67,7 @@ export class HolidaysCache {
         JSON.stringify(this.holidaysData)
       );
     } catch (error) {
-      console.error('Error saving cache to storage:', error);
+      Logger.error('Error saving cache to storage:', error);
     }
   }
 
@@ -74,7 +78,7 @@ export class HolidaysCache {
         this.holidaysData = JSON.parse(data);
       }
     } catch (error) {
-      console.error('Error loading cache from storage:', error);
+      Logger.error('Error loading cache from storage:', error);
     }
   }
 }

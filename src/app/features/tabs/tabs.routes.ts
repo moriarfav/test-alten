@@ -7,30 +7,30 @@ export const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'tab1',
+        path: 'familiary-calendar',
         loadComponent: () =>
-          import('./familiary-calendar/tab1.page').then((m) => m.Tab1Page),
+          import('./familiary-calendar/familiary-calendar.page').then(
+            (m) => m.FamiliaryCalendarPage
+          ),
       },
       {
         path: 'tab2',
-        loadComponent: () =>
-          import('../tabs/tab2/tab2.page').then((m) => m.Tab2Page),
+        loadComponent: () => import('./tab2/tab2.page').then((m) => m.Tab2Page),
       },
       {
         path: 'tab3',
-        loadComponent: () =>
-          import('../tabs/tab3/tab3.page').then((m) => m.Tab3Page),
+        loadComponent: () => import('./tab3/tab3.page').then((m) => m.Tab3Page),
       },
       {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: '/tabs/familiary-calendar',
         pathMatch: 'full',
       },
     ],
   },
   {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/tabs/familiary-calendar',
     pathMatch: 'full',
   },
 ];
