@@ -20,9 +20,9 @@ Carpetas adicionales:
 - **Shared**: Se agrega una carpeta para utilidades y pequeños componentes, que sean reutilizables en toda la aplicacion.
 - **Mocks**: se añade una carpeta para mock en asset que dependiendo del tamaño de proyecto podria agruparse en features
 
-Se mejoraron algunos metodos como: sortHolidaysByDate por uno mas claro y eficiente
-Se renombraron los archivos para una mayor claridad por ejemplo tab1 por familiary-calendar
-Se modifica el modelo creando IHolidayApiResponse para la respuesta de la api y HolidayViewModel para el modelo que utilizara la vista
+- Se mejoraron algunos metodos como: sortHolidaysByDate por uno mas claro y eficiente
+- Se renombraron los archivos para una mayor claridad por ejemplo tab1 por familiary-calendar
+- Se modifica el modelo creando IHolidayApiResponse para la respuesta de la api y HolidayViewModel para el modelo que utilizara la vista
 
 ### Decisiones de Diseño:
 
